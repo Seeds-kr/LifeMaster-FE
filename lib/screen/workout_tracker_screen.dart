@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:seeds_proj/screen/memory_game_screen.dart';
+import 'package:lifemaster_proj2/screen/memory_game_screen.dart';
 import 'dart:ui';
 import '../components/bottom_navigation.dart';
 import 'challenge_detail_screen.dart';
@@ -173,13 +173,13 @@ class _WorkoutTrackerScreenState extends State<WorkoutTrackerScreen> {
                     setState(() {
                       _selectedIndex = index;
                     });
-                    // if (index == 1) {
-                    //   Navigator.pushReplacement(
-                    //     context,
-                    //     // MaterialPageRoute(builder: (context) => MemoryGameScreen()),
-                    //   );
+                    if (index == 1) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => MemoryGameScreen()),
+                      );
                     }
-                  // },
+                  },
                 ),
               ],
             ),
