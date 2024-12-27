@@ -30,12 +30,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  table_calendar: ^3.0.7
+  table_calendar: ^3.1.2
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  intl: ^0.19.0
+  lucide_icons: ^0.257.0
+  flutter_localization: ^0.2.2
+  intl_utils: ^2.8.7
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +62,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/shower.png
+    - assets/images/stretching.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:

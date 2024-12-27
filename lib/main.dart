@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// <<<<<<< feat/Sleep
 import 'screen/sleep_screen.dart';
 import 'screen/playlist_screen.dart';
 
@@ -73,4 +74,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+// =======
+// import 'package:lifemaster_proj2/screen/Diary.dart';
+
+// void main() {
+//   runApp(MaterialApp(
+//     title: '자아성찰',
+//     theme: ThemeData(
+//       primarySwatch: Colors.blue,
+//     ),
+//     home: const CalendarScreen(),
+//   ));
+// >>>>>>> develope
 }
