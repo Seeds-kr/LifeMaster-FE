@@ -97,11 +97,33 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: isEmailVerified
+            ? IconButton(
+          icon: const Icon(Icons.arrow_back_ios,
+          size: 24.0, // 아이콘 크기 설정
+          ),
+          onPressed: () {
+            setState(() {
+              isEmailVerified = false; // 이메일 인증 전 상태로 변경
+            });
+          },
+        )
+            :IconButton(
+          icon: const Icon(Icons.arrow_back_ios,
+            size: 24.0, // 아이콘 크기 설정
+          ), // 왼쪽에 "뒤로 가기" 화살표 아이콘 추가
+          onPressed: () {
+            Navigator.pop(context); // 이전 화면으로 돌아가기
+          },
+        ),
+
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // 자식들을 수직 중앙에 배치
           children: [
-            const SizedBox(height: 120),
             SlideTransition(
               position: _offsetAnimation, // 위아래로 움직이는 애니메이션 적용
               child: SvgPicture.asset(
@@ -139,14 +161,14 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
                 ),
                 child: TextField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: '이메일',
                     hintStyle: TextStyle(
                       fontSize: 12, // 글자 크기 설정
-                      color: const Color(0x99131313), // 투명도 60%로 설정
+                      color: Color(0x99131313), // 투명도 60%로 설정
                     ),
                     border: OutlineInputBorder(borderSide: BorderSide.none), // 테두리 없애기
-                    contentPadding: const EdgeInsets.only(left: 16), // 내부 여백 조정
+                    contentPadding: EdgeInsets.only(left: 16), // 내부 여백 조정
                   ),
                 ),
               ),
@@ -218,13 +240,13 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
                   onChanged: (value) {
                     _checkNewPasswordValidity(); // 새 비밀번호 유효성 검사
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: '새로운 비밀번호',
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       fontSize: 12,
                       color: Color(0x99131313),
                     ),
-                    contentPadding: const EdgeInsets.only(left: 16),
+                    contentPadding: EdgeInsets.only(left: 16),
                     border: InputBorder.none,
                   ),
                 ),
@@ -258,13 +280,13 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
                   onChanged: (value) {
                     _checkPasswordMatch(); // 비밀번호 확인 시 일치 여부 확인
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: '비밀번호 확인',
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       fontSize: 12, // 글자 크기 설정
                       color: Color(0x99131313), // 색상 및 투명도 설정
                     ),
-                    contentPadding: const EdgeInsets.only(left: 16), // 내부 여백 조정
+                    contentPadding: EdgeInsets.only(left: 16), // 내부 여백 조정
                     border: InputBorder.none, // 테두리 없애기
                   ),
                 ),
