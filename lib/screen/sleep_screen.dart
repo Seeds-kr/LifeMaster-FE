@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class SleepScreen extends StatefulWidget {
   @override
@@ -84,16 +86,26 @@ class _SleepScreenState extends State<SleepScreen> {
     final Map<String, String>? item = ModalRoute.of(context)!.settings.arguments as Map<String, String>?;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('수면'),
-      ),
-      body: Padding(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/sleep_background.jpg'),
+            fit: BoxFit.cover, // 배경을 화면에 맞게 조정
+          ),
+        ),
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: item == null
             ? Center(child: Text('재생할 항목이 없습니다.'))
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 160),
+            SvgPicture.asset(
+              'assets/images/sleep_icon.svg', // SVG 파일 경로
+              height: 32, // 아이콘 높이
+              width: 32,  // 아이콘 너비
+            ),
             Text('You Slept', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -114,7 +126,7 @@ class _SleepScreenState extends State<SleepScreen> {
             ),
             SizedBox(height: 16),
             Container(
-              width: 361,
+              // width: 361,
               height: 48,
               decoration: BoxDecoration(
                 color: Color.fromRGBO(51, 51, 51, 0.1),
@@ -173,6 +185,7 @@ class _SleepScreenState extends State<SleepScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }

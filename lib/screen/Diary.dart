@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../models/diary_entry.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -45,11 +46,25 @@ class CalendarScreenState extends State<CalendarScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('자아성찰'),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-        iconTheme: const IconThemeData(color: Colors.black),
+        title: Row(
+          children: [
+            SvgPicture.asset(
+              _showDiary ? 'assets/images/thank_icon.svg' : 'assets/images/diary_icon.svg' , // 조건에 따라 다른 SVG 파일 경로
+              height: 24, // 아이콘 높이
+              width: 24,  // 아이콘 너비
+            ),
+            SizedBox(width: 4), // 텍스트와 아이콘 간 간격
+            Text(
+              '자아성찰',
+              style: TextStyle(
+                fontSize: 20, // 글씨 크기
+                color: Colors.black, // 글씨 색상
+                fontWeight: FontWeight.bold, // 글씨 굵기
+                fontFamily: 'Roboto', // 폰트 패밀리 (선택 사항)
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -81,13 +96,15 @@ class CalendarScreenState extends State<CalendarScreen> {
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
                     color: const Color.fromRGBO(255, 185, 67, 0.3),
-                    borderRadius: BorderRadius.circular(10),
+                    shape: BoxShape.circle,
+                    // borderRadius: BorderRadius.circular(10),
                   ),
                   selectedDecoration: BoxDecoration(
                     color: _showDiary
                         ? const Color.fromRGBO(255, 185, 67, 1)
                         : const Color.fromRGBO(244, 219, 145, 1),
-                    borderRadius: BorderRadius.circular(10),
+                    shape: BoxShape.circle,
+                    // borderRadius: BorderRadius.circular(10),
                   ),
                   defaultTextStyle: const TextStyle(color: Colors.black),
                   weekendTextStyle: const TextStyle(color: Colors.black),
@@ -119,7 +136,7 @@ class CalendarScreenState extends State<CalendarScreen> {
                       child: Container(
                         width: 140,
                         height: 40,
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                        alignment: Alignment.center,  // 텍스트를 중앙에 배치
                         decoration: BoxDecoration(
                           color: _showDiary ? const Color(0xFFFFB943) : Colors.transparent,
                           borderRadius: BorderRadius.horizontal(
@@ -143,7 +160,7 @@ class CalendarScreenState extends State<CalendarScreen> {
                       child: Container(
                         width: 140,
                         height: 40,
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                        alignment: Alignment.center,  // 텍스트를 중앙에 배치
                         decoration: BoxDecoration(
                           color: !_showDiary ? const Color.fromRGBO(244, 219, 145, 1) : Colors.transparent,
                           borderRadius: BorderRadius.horizontal(
@@ -168,6 +185,7 @@ class CalendarScreenState extends State<CalendarScreen> {
             if (!_showDiary)
               GratitudeScreenWidget(entry: selectedEntry, saveEntry: _saveDiaryEntry),
             const SizedBox(height: 16),
+            SizedBox(height: 60), // "시작하기" 버튼 높이에 맞는 여백
           ],
         ),
       ),
@@ -181,9 +199,19 @@ class CalendarScreenState extends State<CalendarScreen> {
           onPressed: () {
             _saveDiaryEntry(selectedEntry); // 작성 내용 저장
           },
-          child: const Text("작성하기"),
+          child: Text(
+            "작성하기",
+            style: TextStyle(
+              fontSize: 12, // 글씨 크기
+              fontFamily: 'Roboto',
+              color: _showDiary
+                  ? const Color.fromRGBO(255, 255, 255, 1) // 조건에 따라 글씨 색 변경
+                  : const Color.fromRGBO(19, 19, 19, 1),
+            ),
+          ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, // 화면 아래 중앙에 배치
     );
   }
 }
@@ -209,7 +237,7 @@ class DiaryScreenWidget extends StatelessWidget {
           children: [
             const Text(
               "오늘의 일기",
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 12, color: Color.fromRGBO(19, 19, 19, 1), fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Container(
@@ -220,10 +248,17 @@ class DiaryScreenWidget extends StatelessWidget {
               ),
               child: TextField(
                 controller: _controller,
-                maxLines: 10,
+                minLines: 10, // 최소 줄 수
+                maxLines: null, // 줄 수 제한 없음
+                style: const TextStyle(
+                  fontSize: 12, // 글씨 크기
+                  color: Color.fromRGBO(19, 19, 19, 0.6), // 글씨 색상
+                  fontWeight: FontWeight.normal, // 글씨 굵기
+                  fontFamily: 'Roboto', // 폰트 패밀리 (선택 사항)
+                ),
                 decoration: const InputDecoration(
                   hintText: "오늘 하루동안 있었던 일을 적어보세요",
-                  hintStyle: TextStyle(fontSize: 14, color: Color.fromRGBO(19, 19, 19, 0.6)),
+                  hintStyle: TextStyle(fontSize: 12, color: Color.fromRGBO(19, 19, 19, 0.6)),
                   border: InputBorder.none,
                 ),
                 onChanged: (value) {
@@ -232,15 +267,6 @@ class DiaryScreenWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 60),
-            // 저장된 내용 표시
-            if (entry.diary != null && entry.diary!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  "저장된 내용: ${entry.diary}",
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
           ],
         ),
       ),
@@ -251,9 +277,10 @@ class DiaryScreenWidget extends StatelessWidget {
 class GratitudeScreenWidget extends StatelessWidget {
   final DiaryEntry entry;
   final Function(DiaryEntry) saveEntry;
-  final List<TextEditingController> _controllers = List.generate(5, (_) => TextEditingController());
+  final List<TextEditingController> _controllers;
 
-  GratitudeScreenWidget({required this.entry, required this.saveEntry, super.key});
+  GratitudeScreenWidget({required this.entry, required this.saveEntry, super.key})
+      : _controllers = List.generate(5, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
@@ -269,31 +296,44 @@ class GratitudeScreenWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: List.generate(5, (index) {
-            String gratitudeLabel = '감사한 일 ${index + 1}';
+            // 한글로 숫자 표현
+            List<String> numberWords = ['첫', '두', '세', '네', '다섯'];
+            String gratitudeLabel = '${numberWords[index]} 번째 감사';
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(gratitudeLabel, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(gratitudeLabel,
+                    style: const TextStyle(fontSize: 12, color: Color.fromRGBO(19, 19, 19, 1), fontWeight: FontWeight.w500 // 글자 두께 설정 (bold보다 덜 두껍게)
+                )),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(240, 244, 245, 1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
                     controller: _controllers[index],
-                    maxLines: 1,
+                    minLines: 1, // 최소 줄 수
+                    maxLines: null, // 줄 수 제한 없음
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color.fromRGBO(19, 19, 19, 0.6),
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'Roboto',
+                    ),
                     decoration: const InputDecoration(
-                      hintText: "오늘 감사한 일을 적어보세요",
-                      hintStyle: TextStyle(fontSize: 14, color: Color.fromRGBO(19, 19, 19, 0.6)),
+                      hintText: "감사한 일을 적어보세요",
+                      hintStyle: TextStyle(fontSize: 12, color: Color.fromRGBO(19, 19, 19, 0.6)),
                       border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(left: 8), // 왼쪽 여백 추가
                     ),
                     onChanged: (value) {
                       entry.gratitude[index] = value;
                     },
                   ),
                 ),
+                const SizedBox(height: 12),
               ],
             );
           }),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PlaylistScreen extends StatelessWidget {
   final List<Map<String, String>> playlistItems1 = [
@@ -36,7 +37,25 @@ class PlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('숙면 플레이리스트'),
+        title: Row(
+          children: [
+            SvgPicture.asset(
+              'assets/images/sleep_icon.svg', // SVG 파일 경로
+              height: 24, // 아이콘 높이
+              width: 24,  // 아이콘 너비
+            ),
+            SizedBox(width: 4), // 텍스트와 아이콘 간 간격
+            Text(
+              '숙면 플레이리스트',
+              style: TextStyle(
+                fontSize: 20, // 글씨 크기
+                color: Colors.black, // 글씨 색상
+                fontWeight: FontWeight.bold, // 글씨 굵기
+                fontFamily: 'Roboto', // 폰트 패밀리 (선택 사항)
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
