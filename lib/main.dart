@@ -1,3 +1,26 @@
+import 'package:flutter/material.dart';
+import 'screen/password_reset_screen.dart'; // 비밀번호 찾기 화면을 import
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '비밀번호 찾기',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const PasswordResetScreen(), // 초기 화면을 비밀번호 찾기 화면으로 설정
+    );
+  }
+}
+
+
 // 사용자 정보 입력
 // import 'package:flutter/material.dart';
 // import 'screen/user_info_screen.dart';
@@ -98,18 +121,18 @@
 // }
 
 // 오늘의 일기, 오감사
-import 'package:flutter/material.dart';
-import 'package:lifemaster_proj2/screen/Diary.dart';
-
-void main() {
-  runApp(MaterialApp(
-    title: '자아성찰',
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ),
-    home: const CalendarScreen(),
-  ));
-}
+// import 'package:flutter/material.dart';
+// import 'package:lifemaster_proj2/screen/Diary.dart';
+//
+// void main() {
+//   runApp(MaterialApp(
+//     title: '자아성찰',
+//     theme: ThemeData(
+//       primarySwatch: Colors.blue,
+//     ),
+//     home: const CalendarScreen(),
+//   ));
+// }
 
 // 디톡스 시간 잠금, 반복 잠금
 // import 'package:flutter/material.dart';
