@@ -9,7 +9,6 @@ import 'screen/playlist_screen.dart';
 import 'screen/Diary.dart';
 import 'screen/lock_selection_screen.dart';
 
-
 void main() {
   runApp(MyApp());
 }
