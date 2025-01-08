@@ -1,157 +1,42 @@
 import 'package:flutter/material.dart';
-import 'screen/password_reset_screen.dart'; // 비밀번호 찾기 화면을 import
+import 'screen/login_screen.dart';
+import 'screen/email_login_screen.dart';
+import 'screen/register_screen.dart';
+import 'screen/password_reset_screen.dart';
+import 'screen/user_info_screen.dart';
+import 'screen/sleep_screen.dart';
+import 'screen/playlist_screen.dart';
+import 'screen/Diary.dart';
+import 'screen/lock_selection_screen.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '비밀번호 찾기',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const PasswordResetScreen(), // 초기 화면을 비밀번호 찾기 화면으로 설정
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginScreen(), // 로그인, 회원가입
+        '/email_login': (context) => EmailLoginScreen(),
+        '/register': (context) => RegisterScreen(),
+        '/password_reset': (context) => PasswordResetScreen(),
+        '/userInfo': (context) => UserInfoScreen(),
+        '/sleep': (context) => SleepScreen(),
+        '/playlist': (context) => PlaylistScreen(), // 숙면 플레이리스트
+        '/diary': (context) => CalendarScreen(), // 오늘의 일기, 오감사
+        '/Detox': (context) => LockSelectionScreen(), // 디톡스 디톡스 시간 잠금, 반복 잠금
+      },
     );
   }
 }
 
-
-// 사용자 정보 입력
-// import 'package:flutter/material.dart';
-// import 'screen/user_info_screen.dart';
-//
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: '회원가입 앱',
-//       theme: ThemeData(primarySwatch: Colors.blue),
-//       home: const UserInfoScreen(),
-//     );
-//   }
-// }
-
-// 숙면플레이리스트
-// import 'package:flutter/material.dart';
-// import 'screen/sleep_screen.dart';
-// import 'screen/playlist_screen.dart';
-//
-// void main() => runApp(SleepApp());
-//
-// class SleepApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: HomeScreen(), // 네비게이션이 포함된 메인 화면
-//       routes: {
-//         '/sleep': (context) => SleepScreen(),
-//         '/playlist': (context) => PlaylistScreen(),
-//       },
-//     );
-//   }
-// }
-//
-// class HomeScreen extends StatefulWidget {
-//   @override
-//   _HomeScreenState createState() => _HomeScreenState();
-// }
-//
-// class _HomeScreenState extends State<HomeScreen> {
-//   int _selectedIndex = 0;
-//
-//   static List<Widget> _widgetOptions = <Widget>[
-//     PlaylistScreen(), // '홈'에 해당하는 화면
-//     Center(child: Text('그룹 페이지')),
-//     Center(child: Text('커뮤니티 페이지')),
-//     Center(child: Text('전체 페이지')),
-//   ];
-//
-//   void _onItemTapped(int index) {
-//     setState(() {
-//       _selectedIndex = index;
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(''),
-//       ),
-//       body: _widgetOptions.elementAt(_selectedIndex),
-//       bottomNavigationBar: BottomNavigationBar(
-//         items: const <BottomNavigationBarItem>[
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.home),
-//             label: '홈',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.group),
-//             label: '그룹',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.chat),
-//             label: '커뮤니티',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.dashboard),
-//             label: '전체',
-//           ),
-//         ],
-//         currentIndex: _selectedIndex,
-//         selectedItemColor: Colors.black,
-//         onTap: _onItemTapped,
-//       ),
-//     );
-//   }
-// }
-
-// 오늘의 일기, 오감사
-// import 'package:flutter/material.dart';
-// import 'package:lifemaster_proj2/screen/Diary.dart';
-//
-// void main() {
-//   runApp(MaterialApp(
-//     title: '자아성찰',
-//     theme: ThemeData(
-//       primarySwatch: Colors.blue,
-//     ),
-//     home: const CalendarScreen(),
-//   ));
-// }
-
-// 디톡스 시간 잠금, 반복 잠금
-// import 'package:flutter/material.dart';
-// import 'screen/lock_selection_screen.dart';
-//
-// void main() {
-//   runApp(MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: '잠금 기능',
-//       theme: ThemeData(primarySwatch: Colors.blue),
-//       home: LockSelectionScreen(), // 별도로 분리한 화면을 호출
-//     );
-//   }
-// }
 // import 'package:flutter/material.dart';
 // // import 'package:lifemaster_proj2/screen/calender_widget.dart';
 // // import 'package:lifemaster_proj2/screen/challenge_widget.dart';
