@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dio/dio.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({super.key});
@@ -9,10 +10,11 @@ class PasswordResetScreen extends StatefulWidget {
 }
 
 class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTickerProviderStateMixin {
+  final Dio _dio = Dio();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   bool isEmailVerified = false; // 이메일 인증 여부
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _newPasswordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
   String _passwordError = ''; // 비밀번호 확인 오류 메시지
   String _newPasswordError = ''; // 새 비밀번호 오류 메시지
 
@@ -39,18 +41,54 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
     ));
   }
 
-  @override
-  void dispose() {
-    _controller.dispose(); // 애니메이션 컨트롤러 종료
-    super.dispose();
+  // 이메일 인증 버튼 클릭 시
+  void _sendVerificationEmail(String email) async {
+    final url = 'http://10.0.2.2:8080/api/auth/send-email';
+
+    try {
+      // 서버에 이메일 존재 여부 확인 요청
+      final response = await _dio.post(
+        url,
+        options: Options(
+          headers: {
+            'accept': '*/*',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: email, // 이메일 데이터를 JSON으로 전송
+      );
+
+      // 서버 응답 처리
+      if (response.statusCode == 200) {
+        // 이메일이 유효하면 인증 메일 발송 성공 처리
+        setState(() {
+          isEmailVerified = true;
+        });
+        _showMessage('인증 메일이 발송되었습니다.');
+      } else {
+        // 200 이외의 상태 코드 처리
+        final message = response.data['message'] ?? '알 수 없는 오류가 발생했습니다.';
+        _showMessage(message);
+      }
+    } on DioError catch (e) {
+      // 서버 오류 또는 네트워크 오류 처리
+      if (e.response != null) {
+        final message = e.response?.data['message'] ?? '서버에서 처리할 수 없습니다.';
+        _showMessage(message);
+      } else {
+        _showMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    }
   }
 
-  // 이메일 인증 버튼 클릭 시
-  void _sendVerificationEmail() {
-    // 이메일로 인증 메일을 보내는 로직을 여기에 추가
-    setState(() {
-      isEmailVerified = true; // 이메일 인증 완료 처리
-    });
+  // 이메일 메시지
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2), // 표시 시간
+      ),
+    );
   }
 
   // 비밀번호 확인
@@ -80,18 +118,53 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
   }
 
   // 비밀번호 변경 처리
-  void _resetPassword() {
-    if (_newPasswordController.text == _confirmPasswordController.text && _newPasswordError.isEmpty) {
-      // 비밀번호 변경 로직 추가
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('비밀번호가 변경되었습니다.')),
-      );
+  Future<void> _resetPassword(BuildContext context, String token) async {
+    // 비밀번호 검증
+    _checkPasswordMatch();
+    _checkNewPasswordValidity();
+
+    if (_newPasswordError.isEmpty && _passwordError.isEmpty) {
+      try {
+        final dio = Dio();
+        final response = await dio.post(
+          'http://10.0.2.2:8080/api/auth/reset-password',
+          data: {
+            "token": token,
+            "newPassword": _newPasswordController.text,
+            "checkPassword": _confirmPasswordController.text,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('비밀번호가 변경되었습니다.')),
+          );
+        }
+      } on DioError catch (e) {
+        String errorMessage = '알 수 없는 오류가 발생했어요.';
+        if (e.response?.statusCode == 401) {
+          errorMessage = '유효하지 않은 토큰입니다.';
+        } else if (e.response?.data != null) {
+          errorMessage = e.response?.data['message'] ?? errorMessage;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     } else {
-      // // 비밀번호 불일치 시 오류 메시지 표시
-      // setState(() {
-      //   _passwordError = '비밀번호를 다시 설정해주세요';
-      // });
+      // 비밀번호 검증 실패 시 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('비밀번호를 다시 확인해주세요.')),
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // 애니메이션 컨트롤러 종료
+    _emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -178,7 +251,14 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
                 width: double.infinity, // 너비를 fill로 설정
                 height: 48, // 높이 설정
                 child: ElevatedButton(
-                  onPressed: _sendVerificationEmail,
+                  onPressed: () {
+                    final email = _emailController.text.trim();
+                    if (email.isEmpty) {
+                      _showMessage('이메일을 입력해주세요.');
+                      return;
+                    }
+                    _sendVerificationEmail(email); // 입력한 이메일로 요청
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF7CD7BD), // 버튼 배경색 (필요 시 수정)
                     shape: RoundedRectangleBorder(
@@ -311,7 +391,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> with SingleTi
                 width: double.infinity, // 너비를 fill로 설정
                 height: 48, // 높이 설정
                 child: ElevatedButton(
-                  onPressed: _resetPassword, // 비밀번호 변경 처리
+                  onPressed: () => _resetPassword(context, 'your_token_here'), // 비밀번호 변경 처리
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF7CD7BD), // 버튼 배경색 (필요 시 수정)
                     shape: RoundedRectangleBorder(
