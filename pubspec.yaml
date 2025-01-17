@@ -28,10 +28,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  dio: ^5.0.0
   flutter:
     sdk: flutter
   table_calendar: ^3.1.2
-
+  shared_preferences: ^2.0.15
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

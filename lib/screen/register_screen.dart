@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dio/dio.dart';
 import 'package:lifemaster_proj2/screen/user_info_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -10,11 +11,13 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   String _passwordError = ''; // 비밀번호 확인 오류 메시지
   String _newPasswordError = ''; // 새 비밀번호 오류 메시지
+
+  final Dio _dio = Dio(); // Dio 인스턴스 생성
 
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
@@ -45,21 +48,50 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     });
   }
 
-  // 회원가입 처리
-  void _register() {
+// 회원가입 처리
+  void _register() async {
     if (_passwordController.text == _confirmPasswordController.text && _newPasswordError.isEmpty) {
-      // 회원가입 로직 추가 (여기서는 가정으로 SnackBar만 표시)
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('회원가입이 완료되었습니다.')),
-      );
+      try {
+        // 회원가입 요청을 보낼 데이터
+        var data = {
+          'email': _emailController.text,
+          'password': _passwordController.text,
+          'passwordConfirm': _confirmPasswordController.text, // 확인 비밀번호 추가
+        };
 
-      // 회원가입이 완료되면 user_info_screen으로 이동
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UserInfoScreen()), // UserInfoScreen으로 이동
-      );
+        // Dio를 사용하여 POST 요청 보내기
+        Response response = await _dio.post(
+          'http://10.0.2.2:8080/user/register',
+          data: data,
+          options: Options(
+            headers: {'Content-Type': 'application/json'},
+          ),
+        );
+
+        // 요청 성공 시 처리
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('회원가입이 완료되었습니다.')),
+          );
+
+          // 회원가입이 완료되면 로그인 화면으로 이동
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => UserInfoScreen(email: _emailController.text)),
+          );
+        } else {
+          // 서버에서 오류가 발생하면 메시지 표시
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('오류: ${response.data['message']}')),
+          );
+        }
+      } catch (e) {
+        // 예외 처리
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('서버와 연결할 수 없습니다.')),
+        );
+      }
     } else {
-      // 비밀번호 불일치 시 오류 메시지 표시
       setState(() {
         _passwordError = '비밀번호를 다시 설정해주세요';
       });

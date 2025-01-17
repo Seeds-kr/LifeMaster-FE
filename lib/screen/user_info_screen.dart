@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
 
 class UserInfoScreen extends StatefulWidget {
-  const UserInfoScreen({super.key});
+  final String email;
+  const UserInfoScreen({Key? key, required this.email}) : super(key: key);
 
   @override
   State<UserInfoScreen> createState() => _UserInfoScreenState();
 }
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
-  // 임의의 사용자 ID 리스트 (사용 불가능한 닉네임 예시)
-  final List<String> unavailableNicknames = ['user123', 'test_user', 'flutter_dev'];
-  late final String currentUserId;
+  late final String currentEmail;
   XFile? _selectedImage;
   TextEditingController _nicknameController = TextEditingController();
   String _nicknameStatus = ''; // 상태 메시지
@@ -21,9 +21,10 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   @override
   void initState() {
     super.initState();
-    currentUserId = 'user123'; // 현재 사용자 ID
+    currentEmail = widget.email; // 현재 사용자 ID
   }
 
+  // 이미지 선택
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -34,12 +35,66 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     }
   }
 
-  // 닉네임이 사용 가능한지 확인하는 함수
-  void _checkNicknameAvailability(String nickname) {
-    setState(() {
-      _isNicknameValid = !unavailableNicknames.contains(nickname) && nickname.isNotEmpty;
-      _nicknameStatus = _isNicknameValid ? '사용 가능한 닉네임이에요' : '';
-    });
+  // 닉네임 사용 가능 여부 확인
+  Future<void> _checkNicknameAvailability(String nickname) async {
+    try {
+      final response = await Dio().post(
+        'https://10.0.2.2:8080/check-nickname', // 닉네임 확인 API
+        data: {'nickname': nickname},
+      );
+
+      if (response.statusCode == 200 && response.data['available']) {
+        setState(() {
+          _isNicknameValid = true;
+          _nicknameStatus = '사용 가능한 닉네임이에요';
+        });
+      } else {
+        setState(() {
+          _isNicknameValid = false;
+          _nicknameStatus = '';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _nicknameStatus = '닉네임 확인 오류: $e';
+      });
+    }
+  }
+
+  // 프로필 이미지와 닉네임 저장
+  Future<void> _saveUserInfo() async {
+    if (!_isNicknameValid) {
+      _showMessage('유효한 닉네임을 입력해주세요.');
+      return;
+    }
+
+    try {
+      final formData = FormData.fromMap({
+        'email': currentEmail, // 전달된 이메일 사용
+        'nickname': _nicknameController.text,
+        'image': _selectedImage != null
+            ? await MultipartFile.fromFile(_selectedImage!.path)
+            : null, // 이미지가 없으면 null 처리
+      });
+
+      final response = await Dio().post(
+        'http://10.0.2.2:8080/user/register/nickname', // 사용자 정보 저장 API
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        _showMessage('정보가 저장되었습니다.');
+        Navigator.pushNamed(context, '/email_login'); // 로그인 화면으로 이동
+      } else {
+        _showMessage('정보 저장 실패');
+      }
+    } catch (e) {
+      _showMessage('오류 발생: $e');
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -83,7 +138,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: '$currentUserId',
+                              text:  currentEmail, // 이메일을 텍스트에 표시
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Color(0xFF8AB6BE), // 사용자 이름 색상
@@ -148,8 +203,8 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                       _checkNicknameAvailability(nickname); // 닉네임 입력 시 상태 확인
                     },
                     decoration: InputDecoration(
-                      labelText: '닉네임',
-                      labelStyle: TextStyle(
+                      hintText: '닉네임',
+                      hintStyle: TextStyle(
                         fontSize: 12, // 글자 크기 설정
                         color: const Color(0x99131313), // 투명도 60%로 설정
                       ),
@@ -190,9 +245,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: _isNicknameValid ? () {
-                  // 버튼 클릭 이벤트 처리
-                } : null,
+                onPressed: _isNicknameValid ? _saveUserInfo : null,
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(361, 48),
                   backgroundColor: const Color(0xFFA0E0CF), // 배경 색상

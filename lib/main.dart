@@ -6,8 +6,8 @@ import 'screen/password_reset_screen.dart';
 import 'screen/user_info_screen.dart';
 import 'screen/sleep_screen.dart';
 import 'screen/playlist_screen.dart';
-import 'screen/Diary.dart';
 import 'screen/lock_selection_screen.dart';
+import 'screen/diary_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,17 +20,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: '/diary_screen',
       routes: {
         '/': (context) => LoginScreen(), // 로그인, 회원가입
         '/email_login': (context) => EmailLoginScreen(),
         '/register': (context) => RegisterScreen(),
         '/password_reset': (context) => PasswordResetScreen(),
-        '/userInfo': (context) => UserInfoScreen(),
+        '/userInfo': (context) => UserInfoScreen(email: '',),
         '/sleep': (context) => SleepScreen(),
         '/playlist': (context) => PlaylistScreen(), // 숙면 플레이리스트
-        '/diary': (context) => CalendarScreen(), // 오늘의 일기, 오감사
         '/Detox': (context) => LockSelectionScreen(), // 디톡스 디톡스 시간 잠금, 반복 잠금
+        '/diary_screen': (context) => DiaryScreen(), // 오늘의 일기, 오감사
       },
     );
   }
