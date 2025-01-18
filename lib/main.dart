@@ -1,40 +1,84 @@
 import 'package:flutter/material.dart';
-import 'screen/login_screen.dart';
-import 'screen/email_login_screen.dart';
-import 'screen/register_screen.dart';
-import 'screen/password_reset_screen.dart';
-import 'screen/user_info_screen.dart';
-import 'screen/sleep_screen.dart';
-import 'screen/playlist_screen.dart';
-import 'screen/lock_selection_screen.dart';
-import 'screen/diary_screen.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  // Kotlin과 통신하기 위한 MethodChannel 정의
+  static const platform = MethodChannel('com.example.lifemaster_proj2/native');
+
+  // Kotlin 네이티브 UI를 호출하는 함수
+  Future<void> _showNativeUI() async {
+    try {
+      // 'showNativeUI' 메서드를 호출하여 네이티브 UI 실행
+      final String result = await platform.invokeMethod('showNativeUI');
+      print(result); // 네이티브 UI 실행 결과 출력
+    } on PlatformException catch (e) {
+      print("Failed to invoke method: '${e.message}'.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Flutter with Kotlin UI',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/diary_screen',
-      routes: {
-        '/': (context) => LoginScreen(), // 로그인, 회원가입
-        '/email_login': (context) => EmailLoginScreen(),
-        '/register': (context) => RegisterScreen(),
-        '/password_reset': (context) => PasswordResetScreen(),
-        '/userInfo': (context) => UserInfoScreen(email: '',),
-        '/sleep': (context) => SleepScreen(),
-        '/playlist': (context) => PlaylistScreen(), // 숙면 플레이리스트
-        '/Detox': (context) => LockSelectionScreen(), // 디톡스 디톡스 시간 잠금, 반복 잠금
-        '/diary_screen': (context) => DiaryScreen(), // 오늘의 일기, 오감사
-      },
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter with Kotlin UI'),
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: _showNativeUI, // 버튼 클릭 시 네이티브 UI 실행
+            child: Text('Show Native UI'),
+          ),
+        ),
+      ),
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'screen/login_screen.dart';
+// import 'screen/email_login_screen.dart';
+// import 'screen/register_screen.dart';
+// import 'screen/password_reset_screen.dart';
+// import 'screen/user_info_screen.dart';
+// import 'screen/sleep_screen.dart';
+// import 'screen/playlist_screen.dart';
+// import 'screen/lock_selection_screen.dart';
+// import 'screen/diary_screen.dart';
+//
+// void main() {
+//   runApp(MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       initialRoute: '/diary_screen',
+//       routes: {
+//         '/': (context) => LoginScreen(), // 로그인, 회원가입
+//         '/email_login': (context) => EmailLoginScreen(),
+//         '/register': (context) => RegisterScreen(),
+//         '/password_reset': (context) => PasswordResetScreen(),
+//         '/userInfo': (context) => UserInfoScreen(email: '',),
+//         '/sleep': (context) => SleepScreen(),
+//         '/playlist': (context) => PlaylistScreen(), // 숙면 플레이리스트
+//         '/Detox': (context) => LockSelectionScreen(), // 디톡스 디톡스 시간 잠금, 반복 잠금
+//         '/diary_screen': (context) => DiaryScreen(), // 오늘의 일기, 오감사
+//       },
+//     );
+//   }
+// }
 
 // import 'package:flutter/material.dart';
 // // import 'package:lifemaster_proj2/screen/calender_widget.dart';
