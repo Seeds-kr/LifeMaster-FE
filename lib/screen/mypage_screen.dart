@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:lifemaster_proj2/utils/modal_utils.dart';
+
 
 class MyPageScreen extends StatelessWidget {
   @override
@@ -142,6 +144,7 @@ class MyPageScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    showSubscriptionDetails(context); //요금제 정보
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Color(0xFF8AB6BE), // 글씨 색상 (8AB6BE)
@@ -179,111 +182,98 @@ class MyPageScreen extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    barrierColor: Colors.transparent, // 배경을 투명하게 설정 (BackdropFilter로 블러 처리할 거라서)
                     builder: (BuildContext context) {
-                      return Stack(
-                        children: [
-                          // 블러 효과 추가
-                          Positioned.fill(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // 블러 강도 조절 (X, Y)
-                              child: Container(
-                                color: Colors.black.withOpacity(0.2), // 블러 배경을 살짝 어둡게 (투명도 조절 가능)
-                              ),
-                            ),
+                      return BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // 블러 효과
+                        child: Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // 모달 둥글게
                           ),
-                          Center( // 다이얼로그를 화면 중앙에 배치
-                            child: Dialog(
-                              backgroundColor: Colors.white, // 모달 배경색을 흰색으로 설정
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12), // 모달창 레디우스 12
-                              ),
-                              child: Container(
-                                width: 320, // 너비 320
-                                padding: EdgeInsets.all(20),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                          backgroundColor: Colors.white, // 모달 배경 흰색
+                          child: Container(
+                            width: 320,
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '회원 탈퇴',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF131313),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Text(
+                                  '정말로 마이라이프를 떠나시겠어요?\n이 작업은 되돌릴 수 없어요',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0x99131313),
+                                  ),
+                                  textAlign: TextAlign.left, // 왼쪽 정렬
+                                ),
+                                SizedBox(height: 40),
+                                Row(
                                   children: [
-                                    Text(
-                                      '탈퇴하기',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF131313),
-                                      ),
-                                    ),
-                                    SizedBox(height: 16),
-                                    Text(
-                                      '정말로 마이라이프를 떠나시겠어요?\n이 작업은 되돌릴 수 없어요',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0x99131313),
-                                      ),
-                                      textAlign: TextAlign.left, // 왼쪽 정렬
-                                    ),
-                                    SizedBox(height: 32),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop(); // 취소 시 닫기
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              minimumSize: Size(double.infinity, 48),
-                                              backgroundColor: Color(0xFF7CD7BD), // 취소 버튼 배경색
-                                              shadowColor: Colors.transparent, // 그림자 제거
-                                              splashFactory: NoSplash.splashFactory, // 클릭 시 효과 없애기
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                                side: BorderSide(color: Colors.transparent),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              '취소하기',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w300,
-                                              ),
-                                            ),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(); // 취소 버튼
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(double.infinity, 48),
+                                          backgroundColor: Color(0xFF7CD7BD), // 취소 버튼 배경색
+                                          shadowColor: Colors.transparent, // 그림자 제거
+                                          splashFactory: NoSplash.splashFactory, // 클릭 시 효과 없애기
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                            side: BorderSide(color: Colors.transparent),
                                           ),
                                         ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          flex: 1,
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                              minimumSize: Size(double.infinity, 48),
-                                              backgroundColor: Color(0xFFF0F4F5), // 탈퇴 버튼 배경색
-                                              shadowColor: Colors.transparent, // 그림자 제거
-                                              splashFactory: NoSplash.splashFactory, // 클릭 시 효과 없애기
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                                side: BorderSide(color: Colors.transparent),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              '탈퇴하기',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Color(0xFF131313),
-                                                fontWeight: FontWeight.w300,
-                                              ),
-                                            ),
+                                        child: Text(
+                                          '취소하기',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300,
                                           ),
                                         ),
-                                      ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          // 탈퇴 로직 추가
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(double.infinity, 48),
+                                          backgroundColor: Color(0xFFF0F4F5), // 탈퇴 버튼 배경색
+                                          shadowColor: Colors.transparent, // 그림자 제거
+                                          splashFactory: NoSplash.splashFactory, // 클릭 시 효과 없애기
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                            side: BorderSide(color: Colors.transparent),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '탈퇴하기',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Color(0xFF131313),
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       );
                     },
                   );
