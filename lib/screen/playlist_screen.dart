@@ -37,6 +37,7 @@ class PlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // 기본 뒤로 가기 버튼 비활성화
         title: Row(
           children: [
             SvgPicture.asset(

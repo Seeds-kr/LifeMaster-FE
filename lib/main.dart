@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifemaster_proj2/screen/edit_mypage_screen.dart';
 import 'screen/login_screen.dart';
 import 'screen/email_login_screen.dart';
 import 'screen/register_screen.dart';
@@ -8,6 +9,10 @@ import 'screen/sleep_screen.dart';
 import 'screen/playlist_screen.dart';
 import 'screen/lock_selection_screen.dart';
 import 'screen/diary_screen.dart';
+import 'screen/menu_screen.dart';
+import 'screen/faq_screen.dart';
+import 'screen/mypage_screen.dart';
+import 'screen/edit_mypage_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,7 +25,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/diary_screen',
+      initialRoute: '/menu_screen',
       routes: {
         '/': (context) => LoginScreen(), // 로그인, 회원가입
         '/email_login': (context) => EmailLoginScreen(),
@@ -31,6 +36,10 @@ class MyApp extends StatelessWidget {
         '/playlist': (context) => PlaylistScreen(), // 숙면 플레이리스트
         '/Detox': (context) => LockSelectionScreen(), // 디톡스 디톡스 시간 잠금, 반복 잠금
         '/diary_screen': (context) => DiaryScreen(), // 오늘의 일기, 오감사
+        '/menu_screen': (context) => MenuScreen(), //전체 메뉴
+        '/faq_screen': (context) => FaqScreen(),
+        '/mypage_screen': (context) => MyPageScreen(),
+        '/edit_mypage_screen': (context) => EditMyPageScreen(),
       },
     );
   }
