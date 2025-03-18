@@ -13,6 +13,7 @@ import 'screen/menu_screen.dart';
 import 'screen/faq_screen.dart';
 import 'screen/mypage_screen.dart';
 import 'screen/edit_mypage_screen.dart';
+import 'screen/sleep_report_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/menu_screen',
+      initialRoute: '/sleep_report_screen',
       routes: {
         '/': (context) => LoginScreen(), // 로그인, 회원가입
         '/email_login': (context) => EmailLoginScreen(),
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/faq_screen': (context) => FaqScreen(),
         '/mypage_screen': (context) => MyPageScreen(),
         '/edit_mypage_screen': (context) => EditMyPageScreen(),
+        '/sleep_report_screen': (context) => SleepReportScreen(),
       },
     );
   }
